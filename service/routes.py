@@ -109,6 +109,14 @@ def create_products():
 #
 # PLACE YOUR CODE HERE TO READ A PRODUCT
 #
+@app.route("/products/<id>", methods=["GET"])
+def get_products(id):
+    app.logger.info("Request to Read a Product...")
+    the_product = Product().find(id)
+    product_as_dict = the_product.serialize()
+    return jsonify(product_as_dict), status.HTTP_200_OK
+
+
 
 ######################################################################
 # U P D A T E   A   P R O D U C T

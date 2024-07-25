@@ -101,6 +101,21 @@ def create_products():
 #
 # PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
 #
+@app.route("/products", methods=["GET"])
+def list_products():
+    name = request.args.get('name')
+
+    if name:
+        app.logger.info("Find by name: %s", name)
+        products_by_name = Product.find_by_name(name)
+    else:
+        app.logger.info("Find all")
+        products_by_name = Product.all()
+
+    products_by_name = Product().find_by_name(name)
+    serialized_list = [product.serialize() for product in products_by_name]
+
+    return serialized_list, status.HTTP_200_OK
 
 ######################################################################
 # R E A D   A   P R O D U C T
@@ -117,6 +132,13 @@ def get_products(product_id):
          abort(status.HTTP_404_NOT_FOUND, f"Product with id '{the_product}' was not found.")
     product_as_dict = the_product.serialize()
     return jsonify(product_as_dict), status.HTTP_200_OK
+
+
+@app.route("/products/all", methods=["GET"])
+def get_all_products():
+    products = Product().all()
+    serialized_list = [product.serialize() for product in products]
+    return serialized_list, status.HTTP_200_OK
 
 
 
@@ -146,3 +168,11 @@ def update_products(product_id):
 #
 # PLACE YOUR CODE TO DELETE A PRODUCT HERE
 #
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_product(product_id):
+    the_product = Product().find(product_id)
+    if the_product is None:
+         abort(status.HTTP_404_NOT_FOUND, f"Product with id '{the_product}' was not found.")
+
+    the_product.delete()
+    return jsonify(""), status.HTTP_204_NO_CONTENT

@@ -20,7 +20,7 @@ Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product
+from service.models import Product, Category
 from service.common import status  # HTTP Status Codes
 from . import app
 
@@ -104,16 +104,23 @@ def create_products():
 @app.route("/products", methods=["GET"])
 def list_products():
     name = request.args.get('name')
+    category = request.args.get('category')
+    available = request.args.get('available')
 
     if name:
         app.logger.info("Find by name: %s", name)
-        products_by_name = Product.find_by_name(name)
+        queried_products = Product.find_by_name(name)
+    elif category:
+        category_value = getattr(Category, category.upper())
+        queried_products = Product.find_by_category(category_value)
+    elif available:
+        queried_products = Product.find_by_availability(available)
     else:
         app.logger.info("Find all")
-        products_by_name = Product.all()
+        queried_products = Product.all()
 
-    products_by_name = Product().find_by_name(name)
-    serialized_list = [product.serialize() for product in products_by_name]
+    # products_by_name = Product().find_by_name(name)
+    serialized_list = [product.serialize() for product in queried_products]
 
     return serialized_list, status.HTTP_200_OK
 

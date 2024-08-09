@@ -55,6 +55,33 @@ Scenario: Read a Product
     And I should see "Cloths" in the "Category" dropdown
     And I should see "59.95" in the "Price" field
 
+Scenario: Update a product
+    When I visit the "Home Page"
+    And I set the "Name" to "Sheets"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I set the "Name" to "New_product"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Sheets" in the "Name" field
+    When press the "Clear" button
+    And I set the "Name" to "New_product"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "New_product" in the "Name" field
+
+
+
+
+
+
+    
+
 
 
 
